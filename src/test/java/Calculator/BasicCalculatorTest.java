@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class BasicCalculatorTest {
     private BasicCalculator basicCalculator=new BasicCalculator();
@@ -18,17 +18,16 @@ public class BasicCalculatorTest {
             "4, *, 2, 8",
             "9, /, 3, 3"
     })
-    @DisplayName("사칙연산")
+    @DisplayName("사칙 연산")
     void test_calculate(int a, String op, int b, int expected) {
         int result = calculate(a, op, b);
-        assertEquals(expected, result);
+        assertThat(result).as("사칙 연산 테스트").isEqualTo(expected);
     }
 
     @Test
     @DisplayName("0으로 나눌 수 없음")
     void divideByZero() {
-        assertThrows(IllegalArgumentException.class,
-                () -> basicCalculator.divide(10, 0));
+      assertThatThrownBy(()->basicCalculator.divide(1,0)).as("0으로 나누면 IllegalArgumentException").isInstanceOf(IllegalArgumentException.class);
     }
 
     private int calculate(int a, String op, int b) {

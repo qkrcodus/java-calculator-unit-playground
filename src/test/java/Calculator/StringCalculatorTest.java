@@ -7,12 +7,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class StringCalculatorTest {
     private StringCalculator stringCalculator=new StringCalculator();
-    
+
     @Nested
     @DisplayName(", 또는 : 구분자 테스트")
     class DefaultDelimiterTest {
@@ -24,7 +24,8 @@ public class StringCalculatorTest {
                 "'1,2:3',6"
         })
         void testDefaultDelimiter(String input, int expected) {
-            assertEquals(expected,stringCalculator.add(input));
+            int result=stringCalculator.add(input);
+            assertThat(result).as(", 또는 : 구분자를 사용한 계산").isEqualTo(expected);
         }
     }
 
@@ -34,7 +35,8 @@ public class StringCalculatorTest {
         @Test
         @DisplayName("//;\n1;2;3 -> 6")
         void testCustomDelimiter() {
-            assertEquals(6,stringCalculator.add("//;\n1;2;3"));
+            int result=stringCalculator.add("//;\n1;2;3");
+            assertThat(result).as("커스텀 구분자를 사용한 계산").isEqualTo(6);
         }
     }
 
@@ -44,7 +46,7 @@ public class StringCalculatorTest {
         @Test
         @DisplayName("숫자가 아닌 토큰")
         void checkToken(){
-            assertThrows(RuntimeException.class,()->stringCalculator.add("1,token,2"));
+            assertThatThrownBy(()->stringCalculator.add("1,token,2")).as("토근이 숫자가 아니면 RuntimeException").isInstanceOf(RuntimeException.class);
         }
 
         @ParameterizedTest(name = "음수 토큰")
@@ -54,7 +56,7 @@ public class StringCalculatorTest {
         }
         )
         void checkToken2(String input){
-            assertThrows(RuntimeException.class,()->stringCalculator.add(input));
+            assertThatThrownBy(()->stringCalculator.add(input)).as("음수 토근 입력시 RuntimeException").isInstanceOf(RuntimeException.class);
         }
     }
 
