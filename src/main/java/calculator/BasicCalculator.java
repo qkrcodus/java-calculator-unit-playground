@@ -1,4 +1,4 @@
-package Calculator;
+package calculator;
 
 public class BasicCalculator {
     public int add(int a, int b) {
