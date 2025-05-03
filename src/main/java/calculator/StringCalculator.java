@@ -3,18 +3,20 @@ package calculator;
 import java.util.regex.Pattern;
 
 public class StringCalculator {
+    private static final String DEFAULT_DELIMITERS = "[,:]";
+
+    private boolean isCustomDelimiter(String input) {
+        return input.startsWith("//");
+    }
+
     public int add(String input){
         int sum=0;
-
-        // 빈 문자열
         if(input==null || input.isEmpty()){
             return 0;
         }
+        String delimiters = DEFAULT_DELIMITERS;
 
-        String delimiters= "[,:]";
-
-        // 커스텀 구분자
-        if(input.startsWith("//")){
+        if(isCustomDelimiter(input)){
             int idx=input.indexOf("\n");
             String customDelimiter=input.substring(2,idx);
             delimiters = Pattern.quote(customDelimiter) + "|" + delimiters;
@@ -22,15 +24,15 @@ public class StringCalculator {
         }
 
         String[] tokens=input.split(delimiters);
+
         for(String token:tokens){
             // 숫자 이외 혹은 빈 토큰 검사
-            if (!token.matches("\\d+")) {
-                throw new RuntimeException("Invalid number: " + token);
+            if (!token.matches("-?\\d+")) {
+                throw new IllegalArgumentException("Invalid token: " + token);
             }
             int num = Integer.parseInt(token);
-            // 음수 검사
             if (num < 0) {
-                throw new RuntimeException("Negative number: " + num);
+                throw new IllegalArgumentException("Negative number: " + num);
             }
             sum += num;
         }
